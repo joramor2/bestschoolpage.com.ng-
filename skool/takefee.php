@@ -39,6 +39,8 @@ if (isset($_POST['addnewrecord'])) {
       'create_at'             =>  date("Y-m-d H:i:s"),
       'update_at'             =>  date("Y-m-d H:i:s"),
     );
+
+
     $flgIn = $db->insertAry("student_fee", $aryData);
 
     $iLastInsertId = $flgIn;
@@ -64,12 +66,18 @@ if (isset($_POST['addnewrecord'])) {
     $aryData = array(
       'student_fee_id'           =>  $iLastInsertId,
       'student_id'             =>  $_POST['student_id'],
+      'session'             =>  $_POST['session'],
+      'class'             =>  $_POST['class'],
+      'term_id'             =>  $_POST['term_id'],
+      'fullname'             =>  $_POST['fullname'],
+      'invoiceno'              =>  $_POST['invoiceno'],
 
 
 
       'total_amount_to_pay'         =>  $_POST['total_amount_to_pay'],
       'currently_paying_amount'       =>  $_POST['currently_paying_amount'],
       'remain_amount'             =>  $_POST['remain_amount'],
+      'discount_amount'           =>  $_POST['discount_amount'],
 
       'userid'              =>  $_SESSION['userid'],
       'usertype'              =>  $_SESSION['usertype'],
@@ -79,6 +87,7 @@ if (isset($_POST['addnewrecord'])) {
 
       'create_at'             =>  date("Y-m-d H:i:s"),
     );
+
     $BflgIn = $db->insertAry("student_fee_transcation", $aryData);
 
     $_SESSION['success'] = "Submit successfully.";
@@ -126,6 +135,32 @@ if (isset($_POST['addnewrecord'])) {
     );
     $BflgIn = $db->insertAry("student_fee_sturcture", $aryData);
   }
+
+  $aryData = array(
+    'student_fee_id'           =>  $iStudentFeeDetails['id'],
+    'student_id'             =>  $iStudentFeeDetails['student_id'],
+    'session'             =>  $_POST['session'],
+    'class'             =>  $_POST['class'],
+    'term_id'             =>  $_POST['term_id'],
+    'fullname'             =>  $_POST['fullname'],
+    'invoiceno'              =>  $_POST['invoiceno'],
+
+
+
+    'total_amount_to_pay'         =>  $_POST['total_amount_to_pay'],
+    'currently_paying_amount'       =>  $_POST['currently_paying_amount'],
+    'remain_amount'             =>  $_POST['remain_amount'],
+    'discount_amount'           =>  $_POST['discount_amount'],
+
+    'userid'              =>  $iStudentFeeDetails['userid'],
+    'usertype'              =>  $iStudentFeeDetails['usertype'],
+
+    'create_by_usertype'    =>  $iStudentFeeDetails['create_by_usertype'],
+    'create_by_userid'        =>  $iStudentFeeDetails['create_by_userid'],
+
+    'create_at'             =>  date("Y-m-d H:i:s"),
+  );
+  $BflgIn = $db->insertAry("student_fee_transcation", $aryData);
 
 
   redirect($FileName . '?action=view&token=' . $iStudentFeeDetails['randomid']);
@@ -477,6 +512,9 @@ if (isset($_POST['addnewrecord'])) {
                       <li role="presentation" class="<?php if ($_GET['action'] == 'add') {
                                                         echo "active";
                                                       } ?>"> <a href="<?php echo $FileName; ?>?action=add"> <i class="fa fa-line-chart" aria-hidden="true"></i><span>Invoice Register</span> </a> </li>
+                      <li role="presentation" class="<?php if ($_GET['action'] == 'transaction') {
+                                                        echo "active";
+                                                      } ?>"> <a href="<?php echo $FileName; ?>?action=transaction"> <i class="fa fa-hourglass-start" aria-hidden="true"></i><span>All Transactions</span> </a> </li>
                     </ul>
                     <div class="tab-content">
                       <?php if ($_GET['action'] == 'add') { ?>
@@ -592,7 +630,7 @@ if (isset($_POST['addnewrecord'])) {
                         </div>
                     </div>
 
-                  <!-- @start StudentTakeFees -->
+                    <!-- @start StudentTakeFees -->
                   <?php } elseif ($_GET['action'] == 'studenttakefees') {
 
                         $iStudentName  = $db->getRow("select id, student_id, first_name,last_name from  manage_student where create_by_userid='" . $create_by_userid . "' and class = '" . $_GET['class'] . "' and term_id = '" . $_GET['term_id'] . "' and session = '" . $_GET['session'] . "' and id = '" . $_GET['student_id'] . "'");
@@ -621,7 +659,9 @@ if (isset($_POST['addnewrecord'])) {
                           <input type="text" name="rollno" readonly value="<?php echo $iStudentName['student_id']; ?>">
                           <input type="hidden" name="student_id" readonly value="<?php echo $iStudentName['id']; ?>">
                         </div>
-                        <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?> </div>
+                        <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>
+                          <input type="hidden" name="fullname" readonly value="<?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>">
+                        </div>
                         <div class="col-lg-4"> Invoice No. :
                           <input type="text" name="invoiceno" readonly value="<?php echo $iInvoiceNo; ?>">
                         </div>
@@ -698,9 +738,9 @@ if (isset($_POST['addnewrecord'])) {
                         </div>
                       </div>
                     </form>
-                  
-                  <!-- @start TakeFees -->
-                  <?php } elseif ($_GET['action'] == 'takefees') { ?>
+                  <?php }
+                      // @start TakeFees
+                      elseif ($_GET['action'] == 'takefees') { ?>
                     <div role="tabpanel" class="tab-pane active" id="profilxe">
                       <div class="abhish">
                         <div class="card-box">
@@ -708,19 +748,28 @@ if (isset($_POST['addnewrecord'])) {
                           $iStudentFeeDetails = $db->getRow("select * from student_fee where create_by_userid='" . $create_by_userid . "' and randomid= '" . $_GET['token'] . "' and create_by_userid='" . $create_by_userid . "'");
                           $iStudentName  = $db->getRow("select id, first_name,last_name from  manage_student where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['student_id'] . "'");
                           ?>
+
                           <form action="" method="POST">
                             <div class="form-group clearfix ">
                               <div class="col-lg-4"> Session : <?php echo $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['session'] . "'"); ?>
+                                <input type="hidden" name="session" value="<?php echo $iStudentFeeDetails['session'] ?>">
                               </div>
                               <div class="col-lg-4"> Class : <?php echo $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['class'] . "'"); ?>
+                                <input type="hidden" name="class" value="<?php echo $iStudentFeeDetails['class'] ?>">
                               </div>
                               <div class="col-lg-4"> Terms : <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['term_id'] . "'"); ?>
+                                <input type="hidden" name="term_id" value="<?php echo $iStudentFeeDetails['term_id'] ?>">
                               </div>
                             </div>
                             <div class="form-group clearfix plims">
                               <div class="col-lg-4"> Roll No. : <?php echo $iStudentFeeDetails['rollno']; ?>
                               </div>
-                              <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?> </div>
+                              <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>
+                                <input type="hidden" name="fullname" readonly value="<?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>">
+                              </div>
+                              <div class="col-lg-4">Invoice No. : <?php echo $iStudentFeeDetails['invoiceno']; ?>
+                                <input type="hidden" name="invoiceno" readonly value="<?php echo $iStudentFeeDetails['invoiceno']; ?>">
+                              </div>
 
                               <div class="col-lg-4"> Student Status : <?php if ($iStudentFeeDetails['student_status'] == '1') {
                                                                         echo 'Returning';
@@ -740,29 +789,32 @@ if (isset($_POST['addnewrecord'])) {
                               <input type="hidden" name="fee_sturcture_id[]" value="<?php echo $iFeeList['id']; ?>">
                               <div class="form-group clearfix plims">
 
-                                
-                                  <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> 
-                                    <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required>
-                                  </div>
-                                
-                                
-                                  <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
-                                    <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off">
-                                  </div>
 
-                                  <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
-                                    <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off">
-                                  </div>
-
-                                  <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Outstanding
-                                    <input name="fees_outstanding[]" id="fees_outstanding_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_outstanding']; ?>" readonly class="form-control makezero outstandingtxt" type="text" autocomplete="off">
-                                  </div>
-
-                                <div class="col-lg-2"> Payment Date
-                                  <input name="fees_date[]" value="<?php echo $iStudentFeeSturcture['fees_date']; ?>" class="form-control  datepicker" type="text" required autocomplete="off">
+                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?>
+                                  <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required>
                                 </div>
 
-                                <div class="col-lg-2"> 
+
+                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
+                                  <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off">
+                                </div>
+
+
+                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
+                                  <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off">
+                                </div>
+
+
+
+                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Outstanding
+                                  <input name="fees_outstanding[]" id="fees_outstanding_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_outstanding']; ?>" readonly class="form-control makezero outstandingtxt" type="text" autocomplete="off">
+                                </div>
+
+
+                                <div class="col-lg-2"> Payment Date
+                                  <input name="fees_date[]" value="<?php echo $iStudentFeeSturcture['fees_date']; ?>" class="form-control  datepicker" type="text" autocomplete="off">
+                                </div>
+                                <div class="col-lg-2">
                                   <select class="form-control" name="payment_mode[]">
                                     <option value="0" <?php if ($iStudentFeeSturcture['payment_mode'] == '0') {
                                                         echo 'selected';
@@ -785,7 +837,7 @@ if (isset($_POST['addnewrecord'])) {
                               </div>
                             <?php } ?>
                             <div class="form-group clearfix plims">
-                              <div class="col-lg-3"> Total fees
+                              <div class="col-lg-3"> Tota fees
                                 <input autocomplete="off" name="total_amount_to_pay" id="total_amount_to_pay" readonly class="form-control makezero" value="<?php echo $iStudentFeeDetails['total_amount_to_pay']; ?>" placeholder="" type="text">
                               </div>
                               <div class="col-lg-3"> Discount Amount
@@ -816,8 +868,6 @@ if (isset($_POST['addnewrecord'])) {
                         </div>
                       </div>
                     </div>
-
-                  <!-- @start view -->
                   <?php } elseif ($_GET['action'] == 'view') { ?>
                     <div role="tabpanel" class="tab-pane active" id="profilxe">
                       <div class="abhish">
@@ -825,16 +875,17 @@ if (isset($_POST['addnewrecord'])) {
                           <?php
                           $iStudentFeeDetails = $db->getRow("select * from student_fee where create_by_userid='" . $create_by_userid . "' and randomid= '" . $_GET['token'] . "'");
                           $iStudentName  = $db->getRow("select id, first_name,last_name from  manage_student where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['student_id'] . "'");
+                          $viewsession = $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['session'] . "'");
                           ?>
-                            <!-- this where download pdf button is  -->
-                            <div class="col-lg-4">
-                              <a target="_blank" href="student_invoice_print_details_pdf.php?token=<?=$iStudentFeeDetails['randomid']?>" class="btn btn-primary" style="color:#fff;"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Get Invoice </a>
-                            </div>
+                          <!-- this where download pdf button is  -->
+                          <div class="col-lg-4">
+                            <a target="_blank" href="student_invoice_print_details_pdf.php?token=<?= $iStudentFeeDetails['randomid'] ?>" class="btn btn-primary" style="color:#fff;"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Get Invoice </a>
+                          </div>
 
 
                           <form action="" method="POST">
                             <div class="form-group clearfix ">
-                              <div class="col-lg-4"> Session : <?php echo $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['session'] . "'"); ?>
+                              <div class="col-lg-4"> Session : <?php echo $viewsession ?>
                               </div>
                               <div class="col-lg-4"> Class : <?php echo $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $iStudentFeeDetails['class'] . "'"); ?>
                               </div>
@@ -845,6 +896,7 @@ if (isset($_POST['addnewrecord'])) {
                               <div class="col-lg-4"> Roll No. : <?php echo $iStudentFeeDetails['rollno']; ?>
                               </div>
                               <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?> </div>
+                              <div class="col-lg-4"> Invoice No. : <?php echo $iStudentFeeDetails['invoiceno'] ?> </div>
 
                               <div class="col-lg-4"> Student Status : <?php if ($iStudentFeeDetails['student_status'] == '1') {
                                                                         echo 'Returning';
@@ -953,6 +1005,135 @@ if (isset($_POST['addnewrecord'])) {
                       </div>
                     </div>
                     <!-- @start last action -->
+                  <?php } elseif ($_GET['action'] == 'transaction') { ?>
+                    <div role="tabpanel" class="tab-pane active" id="profilxe">
+                      <div class="form-group clearfix ">
+                        <form action="" method="POST">
+
+                          <div class="col-lg-2">
+                            <select class="form-control" name="session">
+                              <option value=""> Select Session </option>
+                              <?php
+                              $aryDetail = $db->getRows("select * from  school_session where create_by_userid='" . $create_by_userid . "'");
+                              foreach ($aryDetail as $iList) {
+                                $i = $i + 1;
+                              ?>
+                                <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['session'] == $iList['id']) {
+                                                                              echo "selected";
+                                                                            } ?>><?php echo $iList['session']; ?></option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                          <div class="col-lg-2">
+                            <select class="form-control" name="class">
+                              <option value=""> Select Class </option>
+                              <?php
+                              $aryDetail = $db->getRows("select * from school_class where create_by_userid='" . $create_by_userid . "'");
+                              foreach ($aryDetail as $iList) {
+                              ?>
+                                <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['class'] == $iList['id']) {
+                                                                              echo "selected";
+                                                                            } ?>><?php echo $iList['name']; ?></option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                          <div class="col-lg-2">
+                            <select class="form-control" name="term_id">
+                              <option value=""> Select Term </option>
+                              <?php
+                              $aryDetail = $db->getRows("select * from school_term where create_by_userid='" . $create_by_userid . "'");
+                              foreach ($aryDetail as $iList) {
+                              ?>
+                                <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['term_id'] == $iList['id']) {
+                                                                              echo "selected";
+                                                                            } ?>><?php echo $iList['term']; ?></option>
+                              <?php } ?>
+                            </select>
+                          </div>
+
+                          <div class="col-lg-2">
+                            
+                          </div>
+
+                          <div class="col-lg-2 ">
+                            <input autocomplete="off" name="invoiceno" class="form-control" value="" placeholder="Enter invoice No. " type="text">
+                          </div>
+                          <div class="col-lg-2">
+                            <button type="submit" name="resultdata" class="btn btn-default">Search Details</button>
+                          </div>
+
+                        </form>
+
+                      </div>
+                      <div class="abhish">
+                        <div class="card-box table-responsive">
+                          <table class="table table-striped table-bordered" id="datatable" style="overflow:auto;">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Fullname</th>
+                                <th>Session</th>
+                                <th>Class</th>
+                                <th>Term</th>
+                                <th>Invoice No</th>
+                                <th>Total Fee</th>
+
+                                <th>Outstanding Balance</th>
+                                <th>Amount Paid</th>
+                                <th>Discount</th>
+
+                                <th>Create at</th>
+                                <!-- <th>Action</th> -->
+
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php $i = 0;
+                              $iSearchCont1 = '';
+                              if ($_POST['session'] != '') {
+                                $iSearchCont1 .= " and session = '" . $_POST['session'] . "'";
+                              }
+                              if ($_POST['class'] != '') {
+                                $iSearchCont1 .= " and class = '" . $_POST['class'] . "'";
+                              }
+                              if ($_POST['term_id'] != '') {
+                                $iSearchCont1 .= " and term_id = '" . $_POST['term_id'] . "'";
+                              }
+                              if ($_POST['invoiceno'] != '') {
+                                $iSearchCont1 .= " and invoiceno = '" . $_POST['invoiceno'] . "'";
+                              }
+
+                              // $aryList = $db->getRows("select * from student_fee_transcation order by create_at desc");
+                              $aryList = $db->getRows("select * from student_fee_transcation where create_by_userid='" . $create_by_userid . "' $iSearchCont1 order by create_at desc");
+                           
+                              foreach ($aryList as $iList) {
+                                $i = $i + 1;
+
+                                // $iStuentName = $db->getRow("select first_name , last_name from manage_student where id='" . $iList['student_id'] . "' ");
+                              ?>
+
+
+
+                                <tr>
+                                  <td><?php echo $i ?></td>
+                                  <td><?php echo ucfirst($iList['fullname']); ?></td>
+                                  <td> <?php echo $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['session'] . "'"); ?></td>
+                                  <td> <?php echo $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['class'] . "'"); ?></td>
+                                  <td> <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['term_id'] . "'"); ?></td>
+
+                                  <td><?php echo $iList['invoiceno']; ?></td>
+                                  <td><?php echo $iList['total_amount_to_pay']; ?></td>
+                                  <td><?php echo $iList['remain_amount']; ?></td>
+                                  <td><?php echo $iList['currently_paying_amount']; ?></td>
+                                  <td><?php echo $iList['discount_amount']; ?></td>
+                                  <td><?php echo $iList['create_at']; ?></td>
+                                </tr>
+                              <?php } ?>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
                   <?php } else { ?>
                     <div role="tabpanel" class="tab-pane active" id="profilxe">
                       <div class="form-group clearfix ">
@@ -1104,13 +1285,13 @@ if (isset($_POST['addnewrecord'])) {
         var fee = document.getElementById("fee_" + autoid).value;
         var fees_disccount = document.getElementById("fees_disccount_" + autoid).value;
         var fees_amount = document.getElementById("fees_amount_" + autoid).value;
-        
+
         //fee_amount = parseInt(fee)-parseInt(fees_disccount)
         //document.getElementById("fees_amount_"+autoid).value=fee_amount;
       }
 
 
-     var fees_outstanding = parseInt(fee) - parseInt(fees_disccount) - parseInt(fees_amount);
+      var fees_outstanding = parseInt(fee) - parseInt(fees_disccount) - parseInt(fees_amount);
 
 
       document.getElementById("fees_outstanding_" + autoid).value = fees_outstanding;
