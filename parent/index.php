@@ -268,13 +268,13 @@ $validate->addRule($_POST['username'],'','username ',true);
         <?php } ?>
       </div>
     </div>
-    <section class="body-sign-add" style="">
+    <section class="body-sign-add" >
       <div class="container">
         <div class="row">
           <div class="col-sm-3"> </div>
           <div class="col-sm-6">
             <div class="center-sign">
-              <div class="panel panel-sign" style="">
+              <div class="panel panel-sign" >
                 <div class="panel-title-sign text-center">
                   <div class="center-align green-text" style="color:red;">
                     <h5><?php echo msg($stat);?></h5>
@@ -282,7 +282,7 @@ $validate->addRule($_POST['username'],'','username ',true);
                   </div>
                   <h4 class="title m-none bg-colorflow2" style="width:100%; font-size:18px; color:#fff;"> <i class="fa fa-user mr-xs"></i>Parent Portal Login </h4>
                 </div>
-                <div class="panel-body " style="">
+                <div class="panel-body " >
                   <form id="login-add" method="post" action="">
                     <div class="form-group mb-lg">
                       <div class="input-group input-group-icon">
@@ -292,7 +292,7 @@ $validate->addRule($_POST['username'],'','username ',true);
                     <div class="form-group mb-lg">
                       <div class="input-group">
                         <input name="password"  type="password" placeholder="Password" class="form-control input-lg">
-                        <span class="input-group-addon" style=""> <a href="" class="icon icon-sm"  style="color:inherit; text-decoration:none; size:width:100%;"> 
+                        <span class="input-group-addon" > <a href="" class="icon icon-sm" style="color:inherit; text-decoration:none;width:100%;"> 
                         <!--<i class="fa fa-eye" id="eye_icon"></i> 
 										<span id="show_txt">show</span>--> 
                         </a> </span> </div>

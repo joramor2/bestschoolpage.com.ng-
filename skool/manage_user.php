@@ -196,7 +196,7 @@ body, label, span, a, .gwt-Button {
 }
 
 .abhi .tab-nav > li > a::after {
-	background: # #5a4080 none repeat scroll 0% 0%;
+	background:  #5a4080 none repeat scroll 0% 0%;
 	color: #fff;
 }
 
@@ -576,8 +576,9 @@ body, label, span, a, .gwt-Button {
                               </thead>
                               <tbody>
                                 <?php $i=0;
-									$aryList=$db->getRows("select DISTINCT parent_id  from student_guardian where create_by_userid='".$create_by_userid."' order by id asc");
-                                   
+								
+									$aryList=$db->getRows("select parent_id  from student_guardian where create_by_userid='".$create_by_userid."' 
+									group by parent_id order by id asc");
 									foreach($aryList as $iList) 
 									{ $i=$i+1;
 									

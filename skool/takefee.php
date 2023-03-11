@@ -61,7 +61,7 @@ if (isset($_POST['addnewrecord'])) {
       );
       $BflgIn = $db->insertAry("student_fee_sturcture", $aryData);
     }
-
+  //  die(print_r($aryData));
 
     $aryData = array(
       'student_fee_id'           =>  $iLastInsertId,
@@ -644,14 +644,46 @@ if (isset($_POST['addnewrecord'])) {
                         $iInvoiceNo = randomFix(7) . $iLastId;             ?>
                     <form action="" method="POST">
                       <div class="form-group clearfix ">
-                        <div class="col-lg-4"> Session : <?php echo $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $_GET['session'] . "'"); ?>
-                          <input type="hidden" name="session" value="<?php echo $_GET['session']; ?>">
-                        </div>
-                        <div class="col-lg-4"> Class : <?php echo $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $_GET['class'] . "'"); ?>
-                          <input type="hidden" name="class" value="<?php echo $_GET['class']; ?>">
-                        </div>
-                        <div class="col-lg-4"> Terms : <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $_GET['term_id'] . "'"); ?>
-                          <input type="hidden" name="term_id" value="<?php echo $_GET['term_id']; ?>">
+                        <div class="col-lg-2">
+                                  <select class="form-control" name="session" required>
+                                    <option value=""> Select Session </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from  school_session where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                      $i = $i + 1;
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['session'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['session']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="col-lg-2">
+                                  <select class="form-control" name="class" required>
+                                    <option value=""> Select Class </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from school_class where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['class'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['name']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="col-lg-2">
+                                  <select class="form-control" name="term_id" required>
+                                    <option value=""> Select Term </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from school_term where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['term_id'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['term']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
                         </div>
                       </div>
                       <div class="form-group clearfix plims">
@@ -684,10 +716,10 @@ if (isset($_POST['addnewrecord'])) {
                         <div class="form-group clearfix plims">
 
                           <div class="col-lg-2"> <?php echo $iFeeList['title']; ?>
-                            <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['uniform_fees']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required>
+                            <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iFeeList['amount']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required readonly>
                           </div>
                           <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
-                            <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['school_fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off">
+                            <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['school_fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off" readonly>
                           </div>
                           <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
                             <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['school_fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off">
@@ -722,9 +754,11 @@ if (isset($_POST['addnewrecord'])) {
                         <div class="col-lg-3"> Tota fees
                           <input autocomplete="off" name="total_amount_to_pay" id="total_amount_to_pay" readonly class="form-control makezero" value="<?php echo $_POST['total_amount_to_pay']; ?>" placeholder="" type="text">
                         </div>
-                        <div class="col-lg-3"> Discount Amount
+                        <!-- on display none -->
+                        <div class="col-lg-3" > Discount Amount
                           <input autocomplete="off" name="discount_amount" id="discount_amount" readonly class="form-control makezero" value="<?php echo $_POST['discount_amount']; ?>" placeholder="" type="text">
                         </div>
+                        <!--  -->
                         <div class="col-lg-3"> Amount Paid
                           <input autocomplete="off" name="currently_paying_amount" id="currently_paying_amount" readonly class="form-control makezero" value="<?php echo $_POST['book_fees_disccount']; ?>" placeholder=" " type="text">
                         </div>
@@ -791,17 +825,15 @@ if (isset($_POST['addnewrecord'])) {
 
 
                                 <div class="col-lg-2"> <?php echo $iFeeList['title']; ?>
-                                  <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required>
+                                  <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "readonly ";} ?>>
                                 </div>
-
-
                                 <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
-                                  <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off">
+                                  <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off" readonly>
                                 </div>
 
 
                                 <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
-                                  <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off">
+                                  <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "readonly ";} ?>>
                                 </div>
 
 
@@ -812,10 +844,10 @@ if (isset($_POST['addnewrecord'])) {
 
 
                                 <div class="col-lg-2"> Payment Date
-                                  <input name="fees_date[]" value="<?php echo $iStudentFeeSturcture['fees_date']; ?>" class="form-control  datepicker" type="text" autocomplete="off">
+                                  <input name="fees_date[]" value="<?php echo $iStudentFeeSturcture['fees_date']; ?>" class="form-control  datepicker" type="text" autocomplete="off" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "disabled ";} ?>>
                                 </div>
                                 <div class="col-lg-2">
-                                  <select class="form-control" name="payment_mode[]">
+                                  <select class="form-control" name="payment_mode[]" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "disabled ";} ?>>
                                     <option value="0" <?php if ($iStudentFeeSturcture['payment_mode'] == '0') {
                                                         echo 'selected';
                                                       } ?>>Payment Mode</option>

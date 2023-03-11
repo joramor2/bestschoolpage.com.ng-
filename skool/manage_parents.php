@@ -590,7 +590,7 @@ div.dataTables_paginate {
 					</thead>
 					<tbody>
 					<?php 
-						$manageParent=$db->getRows("select DISTINCT parent_id  from student_guardian where create_by_userid='".$create_by_userid."' order by id asc");
+						$manageParent=$db->getRows("select DISTINCT parent_id from student_guardian where create_by_userid='".$create_by_userid."' order by id asc");
  						foreach($manageParent as $iList)  
 						{ 
 						
