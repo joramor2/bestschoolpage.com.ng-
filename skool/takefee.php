@@ -824,29 +824,31 @@ if (isset($_POST['addnewrecord'])) {
                               <div class="form-group clearfix plims">
 
 
-                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?>
+                                <div class="col-lg-2" style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?>
                                   <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "readonly ";} ?>>
                                 </div>
-                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
+
+                                
+                                <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Discount
                                   <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off" readonly>
                                 </div>
 
 
-                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
+                                <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Amount Paid
                                   <input name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_amount']; ?>" class="form-control makezero feeamounttxt" type="text" autocomplete="off" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "readonly ";} ?>>
                                 </div>
 
 
 
-                                <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Outstanding
+                                <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Outstanding
                                   <input name="fees_outstanding[]" id="fees_outstanding_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_outstanding']; ?>" readonly class="form-control makezero outstandingtxt" type="text" autocomplete="off">
                                 </div>
 
 
-                                <div class="col-lg-2"> Payment Date
+                                <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> Payment Date
                                   <input name="fees_date[]" value="<?php echo $iStudentFeeSturcture['fees_date']; ?>" class="form-control  datepicker" type="text" autocomplete="off" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "disabled ";} ?>>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;">
                                   <select class="form-control" name="payment_mode[]" <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "disabled ";} ?>>
                                     <option value="0" <?php if ($iStudentFeeSturcture['payment_mode'] == '0') {
                                                         echo 'selected';
