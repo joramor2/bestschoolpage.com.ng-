@@ -821,14 +821,12 @@ if (isset($_POST['addnewrecord'])) {
                               $iStudentFeeSturcture = $db->getRow("select * from student_fee_sturcture where   fee_sturcture_id = '" . $iFeeList['id'] . "' and student_fee_id= '" . $iStudentFeeDetails['id'] . "'");
                             ?>
                               <input type="hidden" name="fee_sturcture_id[]" value="<?php echo $iFeeList['id']; ?>">
-                              <div class="form-group clearfix plims">
-
+                              <div class="form-group clearfix plims" style="display:inline-block;">
 
                                 <div class="col-lg-2" style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?>
                                   <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fee']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required <?php if($iStudentFeeSturcture['fees_amount'] > 1 && $iStudentFeeSturcture['fees_outstanding'] == 0){ echo "readonly ";} ?>>
                                 </div>
-
-                                
+                      
                                 <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Discount
                                   <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onKeyUp="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iStudentFeeSturcture['fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off" readonly>
                                 </div>
@@ -951,19 +949,19 @@ if (isset($_POST['addnewrecord'])) {
                                     $iStudentFeeSturcture = $db->getRow("select * from student_fee_sturcture where   fee_sturcture_id = '" . $iFeeList['id'] . "' and student_fee_id= '" . $iStudentFeeDetails['id'] . "'");
                                   ?>
                                     <tr>
-                                      <td><b><?php echo $iFeeList['title']; ?>: </b> <br> <?php echo $iStudentFeeSturcture['fee']; ?></td>
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;" ><b><?php echo $iFeeList['title']; ?>: </b> <br> <?php echo $iStudentFeeSturcture['fee']; ?></td>
 
-                                      <td><b>Discount : </b> <br> <?php echo $iStudentFeeSturcture['fees_disccount']; ?></td>
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;"><b>Discount : </b> <br> <?php echo $iStudentFeeSturcture['fees_disccount']; ?></td>
 
-                                      <td><b>Amount Paid : </b> <br><?php echo $iStudentFeeSturcture['fees_amount']; ?></td>
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;"><b>Amount Paid : </b> <br><?php echo $iStudentFeeSturcture['fees_amount']; ?></td>
 
-                                      <td><b>Outstanding : </b> <br> <?php echo $iStudentFeeSturcture['fees_outstanding']; ?></td>
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;"><b>Outstanding : </b> <br> <?php echo $iStudentFeeSturcture['fees_outstanding']; ?></td>
 
 
 
-                                      <td><b>Date : </b> <br> <?php echo $iStudentFeeSturcture['fees_date']; ?></td>
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;"><b>Date : </b> <br> <?php echo $iStudentFeeSturcture['fees_date']; ?></td>
 
-                                      <td><b>Payment Mode : </b> <br> <?php if ($iStudentFeeSturcture['payment_mode'] == '1') {
+                                      <td style="display: <?php if($iStudentFeeSturcture['fees_amount'] == 0) { echo 'none';} ?> ;"><b>Payment Mode : </b> <br> <?php if ($iStudentFeeSturcture['payment_mode'] == '1') {
                                                                         echo 'Bank';
                                                                       } ?>
                                         <?php if ($iStudentFeeSturcture['payment_mode'] == '2') {
@@ -1097,7 +1095,13 @@ if (isset($_POST['addnewrecord'])) {
                           </div>
 
                         </form>
-
+                        <hr>
+                          <!-- this where download csv button is  -->
+                          <div style="color: white;">
+                            <form action="csv_transaction.php?action=transaction_csv" method="post">
+                              <button type="submit" name="submit" class="btn"> <i class="fa fa-file-csv" style="padding-right:0px!important; "></i> Download Excel </button>
+                            </form>
+                          </div>
                       </div>
                       <div class="abhish">
                         <div class="card-box table-responsive">
@@ -1117,7 +1121,7 @@ if (isset($_POST['addnewrecord'])) {
                                 <th>Discount</th>
 
                                 <th>Create at</th>
-                                <!-- <th>Action</th> -->
+                                <th>Status</th>
 
                               </tr>
                             </thead>
@@ -1161,6 +1165,13 @@ if (isset($_POST['addnewrecord'])) {
                                   <td><?php echo $iList['currently_paying_amount']; ?></td>
                                   <td><?php echo $iList['discount_amount']; ?></td>
                                   <td><?php echo $iList['create_at']; ?></td>
+                                  <td style="color: white;">
+                                    <?php if($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] == 0 ){ ?>
+                                    <span class="btn btn-success">Paid</span>
+                                    <?php }elseif($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] != 0 ){?>
+                                    <span class="btn btn-primary">Pending</span>
+                                    <?php }?>
+                                  </td>
                                 </tr>
                               <?php } ?>
                             </tbody>

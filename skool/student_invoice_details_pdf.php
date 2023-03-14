@@ -10,31 +10,31 @@
 
 <body style="color: black;background-color:aliceblue;padding: 18px;">
     <h3 style="text-align: center; color:orangered;"><?= ucfirst($iupdatedetails['name']); ?>'s Payment Invoice</h3>
-    <div style="position:relative;left:280px;"> 
+    <div style="position:relative;left:280px;">
         <img style="width:90px; height:90px;" src="../uploads/<?php echo $iupdatedetails['logo']; ?>">
     </div>
-    <div class="form-group clearfix " >
-        <div class="col-lg-4" style="margin-bottom: 5px;"> Session : <?=$studentSessionPdf ?>
+    <div class="form-group clearfix ">
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Session : <?= $studentSessionPdf ?>
         </div>
         <!-- <br> -->
-        <div class="col-lg-4" style="margin-bottom: 5px;"> Class : <?=$studentClassPdf?>
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Class : <?= $studentClassPdf ?>
         </div>
         <!-- <br> -->
-        <div class="col-lg-4" style="margin-bottom: 5px;"> Terms : <?=$studentTermPdf ?>
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Terms : <?= $studentTermPdf ?>
         </div>
         <!-- <br> -->
     </div>
     <div class="form-group clearfix plims">
-        <div class="col-lg-4" style="margin-bottom: 5px;"> Roll No. : <?=$iStudentFeeDetailsPdf['rollno']; ?>
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Roll No. : <?= $iStudentFeeDetailsPdf['rollno']; ?>
         </div>
         <!-- <br> -->
-        <div class="col-lg-4" style="margin-bottom: 5px;"> Student Name : <?php echo ucfirst( $iStudentNamePdf['first_name']) . ' ' . ucfirst($iStudentNamePdf['last_name']); ?> </div>
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Student Name : <?php echo ucfirst($iStudentNamePdf['first_name']) . ' ' . ucfirst($iStudentNamePdf['last_name']); ?> </div>
         <!-- <br> -->
         <div class="col-lg-4" style="margin-bottom: 5px;"> Student Status : <?php if ($iStudentFeeDetailsPdf['student_status'] == '1') {
-                                                    echo 'Returning';
-                                                } else {
-                                                    echo "New";
-                                                } ?> 
+                                                                                echo 'Returning';
+                                                                            } else {
+                                                                                echo "New";
+                                                                            } ?>
         </div>
         <!-- <br> -->
     </div>
@@ -44,68 +44,84 @@
 
     <div class="form-group clearfix plims">
         <div class="col-lg-12">
-            <table class="table tetable" style="width: 100%;">
-                <?php 
-                $i = 0;
-                
-                // $ifeeSturcture = $db->getRows("select * from fee_sturcture where create_by_userid='" . $create_by_userid . "' and status !=2 order by id desc");
-                foreach ($ifeeSturcturePdf as $iFeeList) {
-                    $i = $i + 1;
-                    $iStudentFeeSturcturePdf = $db->getRow("select * from student_fee_sturcture where fee_sturcture_id = '" . $iFeeList['id'] . "' and student_fee_id= '" . $iStudentFeeDetailsPdf['id'] . "'");
-                ?>
-                    <tr>
-                        <td><b><?php echo $iFeeList['title']; ?>: </b> <br> <?php echo $iStudentFeeSturcturePdf['fee']; ?></td>
-                        <br>
 
-                        <td><b>Discount : </b> <br> <?php echo $iStudentFeeSturcturePdf['fees_disccount']; ?></td>
+            <?php
+            $i = 0;
 
-                        <td><b>Amount Paid : </b> <br><?php echo $iStudentFeeSturcturePdf['fees_amount']; ?></td>
+            foreach ($ifeeSturcturePdf as $iFeeList) {
+                $i = $i + 1;
+                $iStudentFeeSturcturePdfPdf = $db->getRow("select * from student_fee_sturcture where fee_sturcture_id = '" . $iFeeList['id'] . "' and student_fee_id= '" . $iStudentFeeDetailsPdf['id'] . "'");
+            ?>
+               
+               <div class="form-group clearfix plims" style="display:list-item;padding:20px;">
+                    <div class="col-lg-2" style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?>
+                        <span>= <?php echo $iStudentFeeSturcturePdfPdf['fee']; ?> </span>
+                    </div>
+                    
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Discount
+                                
+                        <span>= <?php echo $iStudentFeeSturcturePdfPdf['fees_disccount']; ?> </span>         
+                    </div>
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Amount Paid
+                                
+                        <span>= <?php echo $iStudentFeeSturcturePdfPdf['fees_amount']; ?> </span>         
+                    </div>
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Outstanding
+                                
+                        <span>= <?php echo $iStudentFeeSturcturePdfPdf['fees_outstanding']; ?> </span>         
+                    </div>
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> <?php echo $iFeeList['title']; ?> Payment Date
+                                
+                        <span>= <?php echo $iStudentFeeSturcturePdfPdf['fees_date']; ?> </span>         
+                    </div>
 
-                        <td><b>Outstanding : </b> <br> <?php echo $iStudentFeeSturcturePdf['fees_outstanding']; ?></td>
-
-                        <td><b>Date : </b> <br> <?php echo $iStudentFeeSturcturePdf['fees_date']; ?></td>
-
-                        <td><b>Payment Mode : </b> <br> <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '1') {
-                                                            echo 'Bank';
-                                                        } ?>
-                            <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '2') {
-                                echo 'Cash';
-                            } ?>
-                            <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '3') {
-                                echo 'POS';
-                            } ?>
-                            <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '4') {
-                                echo 'Bank Transfer';
-                            } ?> </td>
-                    </tr>
-
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdf['fees_amount'] == 0) { echo 'none';} ?>;">
+                        <select class="form-control" name="payment_mode[]" <?php if($iStudentFeeSturcturePdf['fees_amount'] > 1 && $iStudentFeeSturcturePdf['fees_outstanding'] == 0){ echo "disabled ";} ?>>
+                        <option value="0" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '0') {
+                                            echo 'selected';
+                                            } ?>>Payment Mode</option>
+                        <option value="1" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '1') {
+                                            echo 'selected';
+                                            } ?>>Bank</option>
+                        <option value="2" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '2') {
+                                            echo 'selected';
+                                            } ?>>Cash</option>
+                        <option value="3" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '3') {
+                                            echo 'selected';
+                                            } ?>>POS</option>
+                        <option value="4" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '4') {
+                                            echo 'selected';
+                                            } ?>>Bank Transfer</option>
+                        </select>
+                    </div>
+                </div>
 
                 <?php } ?>
-            </table>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="form-group clearfix plims">
-        <div class="col-lg-3"><b> Total Fee : </b> <?php echo $iStudentFeeDetailsPdf['total_amount_to_pay']; ?>
+                <!-- </table> -->
+                </div>
         </div>
 
-        <div class="col-lg-3"><b> Discount Amount : </b> <?php echo $iStudentFeeDetailsPdf['discount_amount']; ?>
+        <hr>
+
+        <div class="form-group clearfix plims">
+            <div class="col-lg-3"><b> Total Fee : </b> <?php echo $iStudentFeeDetailsPdf['total_amount_to_pay']; ?>
+            </div>
+
+            <div class="col-lg-3"><b> Discount Amount : </b> <?php echo $iStudentFeeDetailsPdf['discount_amount']; ?>
+            </div>
+
+
+            <div class="col-lg-3"><b> Total Amount Paid : </b> <?php echo $iStudentFeeDetailsPdf['currently_paying_amount']; ?>
+            </div>
+            <div class="col-lg-3"><b> Outstanding Balance : </b> <?php echo $iStudentFeeDetailsPdf['remain_amount']; ?>
+            </div>
         </div>
 
+        <!-- <div colspan="1" style="width:2%">  -->
 
-        <div class="col-lg-3"><b> Total Amount Paid : </b> <?php echo $iStudentFeeDetailsPdf['currently_paying_amount']; ?>
-        </div>
-        <div class="col-lg-3"><b> Outstanding Balance : </b> <?php echo $iStudentFeeDetailsPdf['remain_amount']; ?>
-        </div>
-    </div>
+        <!-- </div> -->
 
-    <!-- <div colspan="1" style="width:2%">  -->
-
-    <!-- </div> -->
-
-    <!--<div class="form-group clearfix plims">
+        <!--<div class="form-group clearfix plims">
                         <h4>Transcation History</h4>
                          <table class="table table-striped table-bordered">
                             <thead>
