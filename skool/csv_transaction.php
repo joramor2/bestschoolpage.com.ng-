@@ -23,7 +23,7 @@ header("Expires: 0");
 if($_GET['action']=='transaction_csv') {
 
 	$content=array();
-	$title = array("Fullname", "Session", "Class", "Term", "Invoice No", "Total Fee", "Outstanding Balance","Amount Paid","Discount","Create at","status");
+	$title = array("Fullname", "Session", "Class", "Term", "Invoice No", "Outstanding Balance","Amount Paid","Discount","Create at","status");
 
 
 	$rw=array();
@@ -43,7 +43,7 @@ if($_GET['action']=='transaction_csv') {
                 if($iStudentFeeDetails['student_status'] == 3) {$status = "Scholarship";}
 
 
-                $rw[]=array($iList['fullname'],$session,$class,$term, $iList['invoiceno'],$iList['total_amount_to_pay'], $iList['remain_amount'],$iList['currently_paying_amount'],$iList['discount_amount'],$date,$status);
+                $rw[]=array($iList['fullname'],$session,$class,$term, $iList['invoiceno'], $iList['remain_amount'],$iList['currently_paying_amount'],$iList['discount_amount'],$date,$status);
 			}
 }
 

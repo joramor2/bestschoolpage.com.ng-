@@ -98,8 +98,6 @@
         <hr>
 
         <div class="form-group clearfix plims">
-            <div class="col-lg-3"><b> Total Fee : </b> <?php echo $iStudentFeeDetailsPdf['total_amount_to_pay']; ?>
-            </div>
 
             <div class="col-lg-3"><b> Discount Amount : </b> <?php echo $iStudentFeeDetailsPdf['discount_amount']; ?>
             </div>

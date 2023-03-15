@@ -752,8 +752,8 @@ if (isset($_POST['addnewrecord'])) {
 
 
                       <?php } ?>
-                      <div class="form-group clearfix plims">
-                        <div class="col-lg-3"> Tota fees
+                      <div class="form-group clearfix plims" >
+                        <div class="col-lg-3" style="display: none;"> Tota fees
                           <input autocomplete="off" name="total_amount_to_pay" id="total_amount_to_pay" readonly class="form-control makezero" value="<?php echo $_POST['total_amount_to_pay']; ?>" placeholder="" type="text">
                         </div>
                         <!-- on display none -->
@@ -874,7 +874,7 @@ if (isset($_POST['addnewrecord'])) {
                               </div>
                             <?php } ?>
                             <div class="form-group clearfix plims">
-                              <div class="col-lg-3"> Tota fees
+                              <div class="col-lg-3" style="display: none;"> Tota fees
                                 <input autocomplete="off" name="total_amount_to_pay" id="total_amount_to_pay" readonly class="form-control makezero" value="<?php echo $iStudentFeeDetails['total_amount_to_pay']; ?>" placeholder="" type="text">
                               </div>
                               <div class="col-lg-3"> Discount Amount
@@ -992,7 +992,7 @@ if (isset($_POST['addnewrecord'])) {
 
 
                             <div class="form-group clearfix plims">
-                              <div class="col-lg-3"><b> Total Fee : </b> <?php echo $iStudentFeeDetails['total_amount_to_pay']; ?>
+                              <div class="col-lg-3" style="display: none;"><b> Total Fee : </b> <?php echo $iStudentFeeDetails['total_amount_to_pay']; ?>
                               </div>
 
                               <div class="col-lg-3"><b> Discount Amount : </b> <?php echo $iStudentFeeDetails['discount_amount']; ?>
@@ -1123,7 +1123,6 @@ if (isset($_POST['addnewrecord'])) {
                                 <th>Class</th>
                                 <th>Term</th>
                                 <th>Invoice No</th>
-                                <th>Total Fee</th>
 
                                 <th>Outstanding Balance</th>
                                 <th>Amount Paid</th>
@@ -1169,7 +1168,7 @@ if (isset($_POST['addnewrecord'])) {
                                   <td> <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['term_id'] . "'"); ?></td>
 
                                   <td><?php echo $iList['invoiceno']; ?></td>
-                                  <td><?php echo $iList['total_amount_to_pay']; ?></td>
+                                  
                                   <td><?php echo $iList['remain_amount']; ?></td>
                                   <td><?php echo $iList['currently_paying_amount']; ?></td>
                                   <td><?php echo $iList['discount_amount']; ?></td>
@@ -1300,7 +1299,7 @@ if (isset($_POST['addnewrecord'])) {
                                   <td> <?php echo $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['class'] . "'"); ?></td>
                                   <td> <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['term_id'] . "'"); ?></td>
                                   <td><?php echo $iStuentName['first_name'] . ' ' . $iStuentName['last_name']; ?></td>
-                                  <td><?php echo $iList['total_amount_to_pay']; ?></td>
+                                  <td><?php echo $iList['currently_paying_amount']; ?></td>
                                   <td><?php echo $iList['remain_amount']; ?></td>
                                   <td><?php echo $iList['create_at']; ?></td>
                                   <td><a class="btn btn-success btn-xs" style="color:#fff;" href="<?php echo $FileName; ?>?action=view&token=<?php echo $iList['randomid']; ?>">View Detail </a>
