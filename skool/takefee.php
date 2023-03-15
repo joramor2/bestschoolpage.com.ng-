@@ -703,6 +703,7 @@ if (isset($_POST['addnewrecord'])) {
                           <select class="form-control" name="student_status" required>
                             <option value="1">Returning</option>
                             <option value="2">New</option>
+                            <option value="3">Scholarship</option>
                           </select>
                         </div>
                       </div>
@@ -742,6 +743,7 @@ if (isset($_POST['addnewrecord'])) {
                               <option value="2">Cash</option>
                               <option value="3">POS</option>
                               <option value="4">Bank Transfer</option>
+                              <option value="5">Scholarship</option>
                             </select>
                           </div>
 
@@ -807,9 +809,9 @@ if (isset($_POST['addnewrecord'])) {
 
                               <div class="col-lg-4"> Student Status : <?php if ($iStudentFeeDetails['student_status'] == '1') {
                                                                         echo 'Returning';
-                                                                      } else {
+                                                                      } elseif($iStudentFeeDetails['student_status'] == '2') {
                                                                         echo "New";
-                                                                      } ?> </div>
+                                                                      }elseif($iStudentFeeDetails['student_status'] == '3'){ echo "scholarship";} ?> </div>
                             </div>
 
 
@@ -863,6 +865,9 @@ if (isset($_POST['addnewrecord'])) {
                                     <option value="4" <?php if ($iStudentFeeSturcture['payment_mode'] == '4') {
                                                         echo 'selected';
                                                       } ?>>Bank Transfer</option>
+                                    <option value="5" <?php if ($iStudentFeeSturcture['payment_mode'] == '5') {
+                                                        echo 'selected';
+                                                      } ?>>Scholarship</option>
                                   </select>
                                 </div>
 
@@ -932,9 +937,9 @@ if (isset($_POST['addnewrecord'])) {
 
                               <div class="col-lg-4"> Student Status : <?php if ($iStudentFeeDetails['student_status'] == '1') {
                                                                         echo 'Returning';
-                                                                      } else {
+                                                                      } elseif($iStudentFeeDetails['student_status'] == '2') {
                                                                         echo "New";
-                                                                      } ?> </div>
+                                                                      }elseif($iStudentFeeDetails['student_status'] == '3'){ echo "scholarship";} ?> </div>
                             </div>
 
 
@@ -972,7 +977,11 @@ if (isset($_POST['addnewrecord'])) {
                                         } ?>
                                         <?php if ($iStudentFeeSturcture['payment_mode'] == '4') {
                                           echo 'Bank Transfer';
-                                        } ?> </td>
+                                        } ?> 
+                                        <?php if ($iStudentFeeSturcture['payment_mode'] == '5') {
+                                          echo 'Scholarship';
+                                        } ?> 
+                                        </td>
                                     </tr>
 
 
@@ -1147,7 +1156,7 @@ if (isset($_POST['addnewrecord'])) {
                               foreach ($aryList as $iList) {
                                 $i = $i + 1;
 
-                                // $iStuentName = $db->getRow("select first_name , last_name from manage_student where id='" . $iList['student_id'] . "' ");
+                                $iStudentFeeDetails = $db->getRow("select * from student_fee where create_by_userid='" . $create_by_userid . "' and id= '" . $iList['id'] . "'");
                               ?>
 
 
@@ -1166,10 +1175,12 @@ if (isset($_POST['addnewrecord'])) {
                                   <td><?php echo $iList['discount_amount']; ?></td>
                                   <td><?php echo $iList['create_at']; ?></td>
                                   <td style="color: white;">
-                                    <?php if($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] == 0 ){ ?>
+                                    <?php if($iStudentFeeDetails['student_status'] != 3 && $iList['currently_paying_amount'] > 1 && $iList['remain_amount'] == 0){ ?>
                                     <span class="btn btn-success">Paid</span>
-                                    <?php }elseif($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] != 0 ){?>
+                                    <?php }elseif($iStudentFeeDetails['student_status'] != 3 && $iList['currently_paying_amount'] > 1 && $iList['remain_amount'] != 0 ){?>
                                     <span class="btn btn-primary">Pending</span>
+                                    <?php }elseif($iStudentFeeDetails['student_status'] == 3 &&  $iList['currently_paying_amount'] > 1 && $iList['remain_amount'] == 0){?>
+                                    <span class="btn btn-info">Scholarship</span>
                                     <?php }?>
                                   </td>
                                 </tr>

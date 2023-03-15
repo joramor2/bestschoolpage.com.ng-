@@ -32,9 +32,9 @@
         <!-- <br> -->
         <div class="col-lg-4" style="margin-bottom: 5px;"> Student Status : <?php if ($iStudentFeeDetailsPdf['student_status'] == '1') {
                                                                                 echo 'Returning';
-                                                                            } else {
+                                                                            } elseif($iStudentFeeDetailsPdf['student_status'] == '2') {
                                                                                 echo "New";
-                                                                            } ?>
+                                                                            } elseif($iStudentFeeDetailsPdf['student_status'] == '3') { echo "Scholarship";}?>
         </div>
         <!-- <br> -->
     </div>
@@ -75,24 +75,18 @@
                         <span>= <?php echo $iStudentFeeSturcturePdfPdf['fees_date']; ?> </span>         
                     </div>
 
-                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdf['fees_amount'] == 0) { echo 'none';} ?>;">
-                        <select class="form-control" name="payment_mode[]" <?php if($iStudentFeeSturcturePdf['fees_amount'] > 1 && $iStudentFeeSturcturePdf['fees_outstanding'] == 0){ echo "disabled ";} ?>>
-                        <option value="0" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '0') {
-                                            echo 'selected';
-                                            } ?>>Payment Mode</option>
-                        <option value="1" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '1') {
-                                            echo 'selected';
-                                            } ?>>Bank</option>
-                        <option value="2" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '2') {
-                                            echo 'selected';
-                                            } ?>>Cash</option>
-                        <option value="3" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '3') {
-                                            echo 'selected';
-                                            } ?>>POS</option>
-                        <option value="4" <?php if ($iStudentFeeSturcturePdf['payment_mode'] == '4') {
-                                            echo 'selected';
-                                            } ?>>Bank Transfer</option>
-                        </select>
+                    <div class="col-lg-2"  style="display: <?php if($iStudentFeeSturcturePdfPdf['fees_amount'] == 0) { echo 'none';} ?>;"> Payment Mode
+                        <?php if( $iStudentFeeSturcturePdfPdf['payment_mode'] == '1'){ ?>
+                        <span> = Bank </span>
+                        <?php }elseif($iStudentFeeSturcturePdfPdf['payment_mode'] == '2'){?>
+                            <span> = Cash </span>
+                        <?php }elseif($iStudentFeeSturcturePdfPdf['payment_mode'] == '3'){?>
+                            <span> POS </span>
+                        <?php }elseif($iStudentFeeSturcturePdfPdf['payment_mode'] == '4'){?>
+                            <span> = Bank Transfer </span>
+                        <?php }elseif($iStudentFeeSturcturePdfPdf['payment_mode'] == '5'){?>
+                            <span> = Scholarship </span>
+                        <?php }?>    
                     </div>
                 </div>
 
