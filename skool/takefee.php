@@ -7,8 +7,8 @@ if ($_SESSION['success'] != "") {
   $stat['success'] = $_SESSION['success'];
   unset($_SESSION['success']);
 }
-if (isset($_POST['addnewrecord'])) {
-
+if (isset($_POST['addnewrecord']) || isset($_POST['addnewrecordFix']) ) {
+  
   if ($validate->validate() && count($stat) == 0) {
 
     $iLastId = $db->getVal("select id from student_fee order by id desc") + 1;
@@ -21,6 +21,7 @@ if (isset($_POST['addnewrecord'])) {
       'term_id'               =>  $_POST['term_id'],
       'rollno'               =>  $_POST['rollno'],
       'student_status'           =>  $_POST['student_status'],
+      'PType'                 => $_POST['PType'],
 
       'total_amount_to_pay'         =>  $_POST['total_amount_to_pay'],
       'currently_paying_amount'       =>  $_POST['currently_paying_amount'],
@@ -39,7 +40,6 @@ if (isset($_POST['addnewrecord'])) {
       'create_at'             =>  date("Y-m-d H:i:s"),
       'update_at'             =>  date("Y-m-d H:i:s"),
     );
-
 
     $flgIn = $db->insertAry("student_fee", $aryData);
 
@@ -573,7 +573,7 @@ if (isset($_POST['addnewrecord'])) {
                               </div>
                             </form>
                             <div class="card-box table-responsive">
-                              <table class="table table-striped table-bordered" id="datatable">
+                              <table class="table table-striped table-bordered" id="datatable" style="overflow:auto;">
                                 <thead>
                                   <tr>
                                     <th>#</th>
@@ -617,7 +617,10 @@ if (isset($_POST['addnewrecord'])) {
                                       <td> <?php echo $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['term_id'] . "'"); ?></td>
                                       <td><?php echo $iList['first_name'] . ' ' . $iList['last_name']; ?></td>
                                       <td>
-                                        <a class="btn btn-primary btn-xs" style="color:#fff;" href="<?php echo $FileName; ?>?action=studenttakefees&class=<?php echo $iList['class']; ?>&term_id=<?php echo $iList['term_id']; ?>&session=<?php echo $iList['session']; ?>&student_id=<?php echo $iList['id']; ?>"> Payment Details </a>
+                                        <a class="btn btn-info btn-xs" style="color:#fff;" href="<?php echo $FileName; ?>?action=studenttakefees&class=<?php echo $iList['class']; ?>&term_id=<?php echo $iList['term_id']; ?>&session=<?php echo $iList['session']; ?>&student_id=<?php echo $iList['id']; ?>">Flexable Payment</a>
+                                      <!-- </td>
+                                      <td> -->
+                                        <a class="btn btn-primary btn-xs" style="color:#fff;" href="<?php echo $FileName; ?>?action=studentfixedtakefees&class=<?php echo $iList['class']; ?>&term_id=<?php echo $iList['term_id']; ?>&session=<?php echo $iList['session']; ?>&student_id=<?php echo $iList['id']; ?>">Fixed Payment</a>
                                       </td>
                                     </tr>
                                   <?php } ?>
@@ -768,9 +771,159 @@ if (isset($_POST['addnewrecord'])) {
                           <input autocomplete="off" name="remain_amount" id="remain_amount" class="form-control makezero" readonly value="<?php echo $_POST['remain_amount']; ?>" placeholder="" type="text">
                         </div>
                       </div>
+                      <input type="hidden" name="PType" value="1">
                       <div class="form-group clearfix plims">
                         <div class="col-lg-4">
                           <input type="submit" name="addnewrecord" class="btn btn-primary" value="Submit" style="color:#fff;">
+                        </div>
+                      </div>
+                    </form>
+                  <?php }
+                  // fixed payment
+                  elseif ($_GET['action'] == 'studentfixedtakefees') {
+                    $iStudentName  = $db->getRow("select id, student_id, first_name,last_name from  manage_student where create_by_userid='" . $create_by_userid . "' and class = '" . $_GET['class'] . "' and term_id = '" . $_GET['term_id'] . "' and session = '" . $_GET['session'] . "' and id = '" . $_GET['student_id'] . "'");
+
+                        $iStudentFeeDetails = $db->getRow("select * from student_fee where create_by_userid='" . $create_by_userid . "' and class = '" . $_GET['class'] . "' and term_id = '" . $_GET['term_id'] . "' and session = '" . $_GET['session'] . "' and student_id = '" . $_GET['student_id'] . "'");
+                        if ($iStudentFeeDetails['id'] != '') {
+                          redirect($FileName . '?action=takefees&token=' . $iStudentFeeDetails['randomid']);
+                        }
+                        // echo $iStudentFeeDetails['id'] ;
+                        $iLastId = $db->getVal("select id from student_fee order by id desc") + 1;
+                        $iInvoiceNo = randomFix(7) . $iLastId; ?>
+                    
+                        <form action="" method="POST">
+                      <div class="form-group clearfix " >
+                        <div class="col-lg-2">
+                                  <select class="form-control" name="session" required>
+                                    <option value=""> Select Session </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from  school_session where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                      $i = $i + 1;
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['session'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['session']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="col-lg-2">
+                                  <select class="form-control" name="class" required>
+                                    <option value=""> Select Class </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from school_class where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['class'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['name']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="col-lg-2">
+                                  <select class="form-control" name="term_id" required>
+                                    <option value=""> Select Term </option>
+                                    <?php
+                                    $aryDetail = $db->getRows("select * from school_term where create_by_userid='" . $create_by_userid . "'");
+                                    foreach ($aryDetail as $iList) {
+                                    ?>
+                                      <option value="<?php echo $iList['id']; ?>" <?php if ($_POST['term_id'] == $iList['id']) {
+                                                                                    echo "selected";
+                                                                                  } ?>><?php echo $iList['term']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                        </div>
+                      </div>                                                         
+                      <div class="form-group clearfix plims" style="background-color: aliceblue;">
+                        <div class="col-lg-4"> Admission No. :
+                          <input type="text" name="rollno" readonly value="<?php echo $iStudentName['student_id']; ?>">
+                          <input type="hidden" name="student_id" readonly value="<?php echo $iStudentName['id']; ?>">
+                        </div>
+                        <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>
+                          <input type="hidden" name="fullname" readonly value="<?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?>">
+                        </div>
+                        <div class="col-lg-4"> Invoice No. :
+                          <input type="text" name="invoiceno" readonly value="<?php echo $iInvoiceNo; ?>">
+                        </div>
+                      </div>
+                      <div class="form-group clearfix plims" style="background-color: aliceblue;">
+                        <div class="col-lg-4">
+                          <select class="form-control" name="student_status" required>
+                            <option value="1">Returning</option>
+                            <option value="2">New</option>
+                            <option value="3">Scholarship</option>
+                          </select>
+                        </div>
+                      </div>
+
+
+                      <?php $i = 0;
+                        $ifeeSturcture = $db->getRows("select * from fee_sturcture where create_by_userid='" . $create_by_userid . "' and status !=2 order by id desc");
+                        foreach ($ifeeSturcture as $iFeeList) {
+                          $i = $i + 1;  ?>
+                        <input type="hidden" name="fee_sturcture_id[]" value="<?php echo $iFeeList['id']; ?>">
+                        <div class="form-group clearfix plims" style="background-color: aliceblue;">
+
+                          <div class="col-lg-2"> <?php echo $iFeeList['title']; ?>
+                            <input name="fee[]" id="fee_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $iFeeList['amount']; ?>" class="form-control makezero feetxt" type="text" autocomplete="off" required readonly>
+                          </div>
+                          <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Discount
+                            <input name="fees_disccount[]" id="fees_disccount_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['school_fees_disccount']; ?>" class="form-control makezero feediscountxt" type="text" autocomplete="off" readonly>
+                          </div>
+                          <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Amount Paid
+                            <select name="fees_amount[]" id="fees_amount_<?php echo $iFeeList['id']; ?>" onchange="finalfeetopay('<?php echo $iFeeList['id']; ?>',this)" class="makezero feeamounttxt">
+                              <option value="0"></option>
+                              <option value="<?php echo $iFeeList['amount']; ?>"><?php echo $iFeeList['amount']; ?></option>
+                            </select>
+                          </div>
+
+
+                          <div class="col-lg-2"> <?php echo $iFeeList['title']; ?> Outstanding
+                            <input name="fees_outstanding[]" id="fees_outstanding_<?php echo $iFeeList['id']; ?>" onkeyup="finalfeetopay('<?php echo $iFeeList['id']; ?>')" value="<?php echo $_POST['fees_outstanding']; ?>" readonly class="form-control makezero outstandingtxt" type="text" autocomplete="off">
+                          </div>
+
+
+                          <div class="col-lg-2"> Payment Date
+                            <input name="fees_date[]" value="<?php echo $_POST['fees_date']; ?>" class="form-control  datepicker" type="text" autocomplete="off">
+                          </div>
+
+                          <div class="col-lg-2">
+                            <select class="form-control" name="payment_mode[]">
+                              <option value="0">Payment Mode</option>
+                              <option value="1">Bank</option>
+                              <option value="2">Cash</option>
+                              <option value="3">POS</option>
+                              <option value="4">Bank Transfer</option>
+                              <option value="5">Scholarship</option>
+                            </select>
+                          </div>
+
+
+                        </div>
+
+
+                      <?php } ?>
+                      <div class="form-group clearfix plims" style="background-color: aliceblue;">
+                        <div class="col-lg-3" style="display: none;"> Total fees
+                          <input autocomplete="off" name="total_amount_to_pay" id="total_amount_to_pay" readonly class="form-control makezero" value="<?php echo $_POST['total_amount_to_pay']; ?>" placeholder="" type="text">
+                        </div>
+                        <!-- on display none -->
+                        <div class="col-lg-3" > Discount Amount
+                          <input autocomplete="off" name="discount_amount" id="discount_amount" readonly class="form-control makezero" value="<?php echo $_POST['discount_amount']; ?>" placeholder="" type="text">
+                        </div>
+                        <!--  -->
+                        <div class="col-lg-3"> Amount Paid
+                          <input autocomplete="off" name="currently_paying_amount" id=""  class="form-control" value="<?php echo $_POST['book_fees_disccount']; ?>" placeholder="Enter Amount paid " type="text" required>
+                        </div>
+                        <div class="col-lg-3"> Outstanding Balance
+                          <input autocomplete="off" name="remain_amount" id="remain_amount" class="form-control makezero" readonly value="<?php echo $_POST['remain_amount']; ?>" placeholder="" type="text">
+                        </div>
+                      </div>
+                      <input type="hidden" name="PType" value="2">
+                      <div class="form-group clearfix plims">
+                        <div class="col-lg-4">
+                          <input type="submit" name="addnewrecordFix" class="btn btn-primary" value="Submit" style="color:#fff;">
                         </div>
                       </div>
                     </form>
@@ -918,6 +1071,7 @@ if (isset($_POST['addnewrecord'])) {
                           <div class="col-lg-4">
                             <a target="_blank" href="student_invoice_print_details_pdf.php?token=<?= $iStudentFeeDetails['randomid'] ?>" class="btn btn-primary" style="color:#fff;"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Get Invoice </a>
                           </div>
+                          
 
 
                           <form action="" method="POST">
@@ -931,6 +1085,8 @@ if (isset($_POST['addnewrecord'])) {
                             </div>
                             <div class="form-group clearfix plims">
                               <div class="col-lg-4"> Roll No. : <?php echo $iStudentFeeDetails['rollno']; ?>
+                              </div>
+                              <div class="col-lg-4">Payment Type : <?php $PType = ($iStudentFeeDetails['PType'] == 2) ? "Flexible" : 'Fixed' ; echo $PType; ?>
                               </div>
                               <div class="col-lg-4"> Student Name : <?php echo $iStudentName['first_name'] . ' ' . $iStudentName['last_name']; ?> </div>
                               <div class="col-lg-4"> Invoice No. : <?php echo $iStudentFeeDetails['invoiceno'] ?> </div>
@@ -1106,11 +1262,25 @@ if (isset($_POST['addnewrecord'])) {
                         </form>
                         <hr>
                           <!-- this where download csv button is  -->
-                          <div style="color: white;">
-                            <form action="csv_transaction.php?action=transaction_csv" method="post">
-                              <button type="submit" name="submit" class="btn"> <i class="fa fa-file-csv" style="padding-right:0px!important; "></i> Download Excel </button>
-                            </form>
+                          <div style="border:1px solid gray;height:40px;padding:auto;display:flex;width:40%;">
+                            <div style="color: white;margin:3px;">
+                              <form action="csv_transaction.php?action=transaction_csv" method="post">
+                                <button type="submit" name="submit" class="btn"> <i class="fa fa-file-csv" style="padding-right:0px!important; "></i> All Time Transactions </button>
+                              </form>
+                            </div>
+                            <!-- <div style="color: white;margin:3px;">
+                              <form action="csv_transaction.php?action=term_csv" method="post">
+                                <button type="submit" name="submit" class="btn"> <i class="fa fa-file-csv" style="padding-right:0px!important; "></i> Term Transactions </button>
+                              </form>
+                            </div> -->
+                            
+                            <div style="color: white;margin:3px;">
+                              <form action="csv_transaction.php?action=day_csv" method="post">
+                                <button type="submit" name="submit" class="btn"> <i class="fa fa-file-csv" style="padding-right:0px!important; "></i> Daily transaction </button>
+                              </form>
+                            </div>
                           </div>
+                          <!-- stop of csv -->
                       </div>
                       <div class="abhish">
                         <div class="card-box table-responsive">
@@ -1126,6 +1296,7 @@ if (isset($_POST['addnewrecord'])) {
 
                                 <th>Outstanding Balance</th>
                                 <th>Amount Paid</th>
+                                <th>Payment type</th>
                                 <th>Discount</th>
 
                                 <th>Create at</th>
@@ -1171,6 +1342,7 @@ if (isset($_POST['addnewrecord'])) {
                                   
                                   <td><?php echo $iList['remain_amount']; ?></td>
                                   <td><?php echo $iList['currently_paying_amount']; ?></td>
+                                  <td><?php $Ptype = ($iStudentFeeDetails['PType'] == 2) ? 'Fixed' : 'Flexible' ; echo $Ptype?></td>
                                   <td><?php echo $iList['discount_amount']; ?></td>
                                   <td><?php echo $iList['create_at']; ?></td>
                                   <td style="color: white;">

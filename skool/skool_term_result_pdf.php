@@ -669,10 +669,12 @@ $processTime8 = microtime(true) - $startTime;
             <td style=""><?php if($iSchoolPDFsetting['title_3']=='') { echo "Principal's Remarks"; } else { echo $iSchoolPDFsetting['title_3']; } ?>
               :</td>
             <td style=""><?php  $iPrinciPleRemarkComment =  $db->getVal("select comments from principle_remarks where student_id='".$iStudent['id']."'");
+            $commentgrade = $db->getRow("select comment from school_grade where  create_by_userid='".$create_by_userid."' and minimum_number <= ".$grandTotal." and maximum_number >= ".$grandTotal."");
 				if($iPrinciPleRemarkComment!='') { echo $iPrinciPleRemarkComment; } 
 				else {                                        
-				echo $graddingg['comment'];
+				echo $commentgrade['comment'];
 				}
+
 			 ?></td>
             <?php $sign_term=$db->getRow("select sign from  principal_sign_nextTerm where  create_by_userid='".$create_by_userid."' order by id desc"); ?>
             <?php $sign_termdate=$db->getRow("select nextTerm from  principal_set_nextTerm where  create_by_userid='".$create_by_userid."' and session_id='".$_GET['session']."' $term_select order by id desc"); ?>

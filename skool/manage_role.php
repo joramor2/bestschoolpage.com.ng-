@@ -193,7 +193,7 @@ body, label, span, a, .gwt-Button {
 }
 
 .abhi .tab-nav > li > a::after {
-	background: # #5a4080 none repeat scroll 0% 0%;
+	background: #5a4080 none repeat scroll 0% 0%;
 	color: #fff;
 }
 

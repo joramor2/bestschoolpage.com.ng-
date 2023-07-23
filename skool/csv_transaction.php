@@ -27,7 +27,6 @@ if($_GET['action']=='transaction_csv') {
 
 
 	$rw=array();
-
     $aryList = $db->getRows("select * from student_fee_transcation where create_by_userid='" . $create_by_userid . "' order by id desc");
      foreach($aryList as $iList) 
 			{
@@ -45,6 +44,31 @@ if($_GET['action']=='transaction_csv') {
 
                 $rw[]=array($iList['fullname'],$session,$class,$term, $iList['invoiceno'], $iList['remain_amount'],$iList['currently_paying_amount'],$iList['discount_amount'],$date,$status);
 			}
+}elseif($_GET['action']=='day_csv') {
+
+	$content=array();
+	$title = array("Fullname", "Session", "Class", "Term", "Invoice No", "Outstanding Balance","Amount Paid","Discount","Create at","status");
+
+
+	$rw=array();
+	
+    $aryList = $db->getRows("select * from student_fee_transcation where create_by_userid='" . $create_by_userid . "' and create_at='".date('Y-m-d')."'  order by id desc");
+	foreach($aryList as $iList) 
+	{
+		$iStudentFeeDetails = $db->getRow("select * from student_fee where create_by_userid='" . $create_by_userid . "' and id= '" . $iList['id'] . "'");
+
+		$session = $db->getVal("select session from  school_session where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['session'] . "'");
+		$class = $db->getVal("select name from  school_class where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['class'] . "'");
+		$term =  $db->getVal("select term from  school_term where create_by_userid='" . $create_by_userid . "' and id = '" . $iList['term_id'] . "'");
+		$date =  $db->getVal("select create_at from  student_fee_transcation where create_by_userid='" . $create_by_userid . "' ");
+
+		if($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] == 0 && $iStudentFeeDetails['student_status'] != 3) {$status = "Paid";}
+		if($iList['currently_paying_amount'] > 1 && $iList['remain_amount'] != 0 ) {$status = "Pending";}
+		if($iStudentFeeDetails['student_status'] == 3) {$status = "Scholarship";}
+
+
+		$rw[]=array($iList['fullname'],$session,$class,$term, $iList['invoiceno'], $iList['remain_amount'],$iList['currently_paying_amount'],$iList['discount_amount'],$date,$status);
+}
 }
 
 $content[]=$rw;

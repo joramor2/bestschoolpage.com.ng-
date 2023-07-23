@@ -201,6 +201,56 @@ if($iPackageJsoneDecodeAllowFile['dashboard']!='1') {
           </div>
         </div>
       </div>
+      <hr style="border: 1px solid lightgray;">
+      <!-- Table -->
+      <div class="card-box table-responsive">
+        <table class="table table-striped table-bordered" id="datatable" style="overflow:auto;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Session</th>
+              <th>Class</th>
+              <th>Class</th>
+              <th>Terms</th>
+              <th>Total fees (sum)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $i = 0;
+            $iSearchCont = '';
+            if ($_POST['session'] != '') {
+              $iSearchCont .= " and session = '" . $_POST['session'] . "'";
+            }
+            if ($_POST['class'] != '') {
+              $iSearchCont .= " and class = '" . $_POST['class'] . "'";
+            }
+            if ($_POST['term_id'] != '') {
+              $iSearchCont .= " and term_id = '" . $_POST['term_id'] . "'";
+            }
+            if ($_POST['rollno'] != '') {
+              $iSearchCont .= " and student_id = '" . $_POST['rollno'] . "'";
+            }
+
+            // $aryList = $db->getRows("select student_id, first_name ,last_name, session, class, term_id, id from manage_student where create_by_userid='" . $create_by_userid . "' $iSearchCont order by id desc");
+            // foreach ($aryList as $iList) {
+            //   $i = $i + 1;
+
+            ?>
+
+
+
+              <tr>
+                <td></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td></td>
+                <td></td>
+              </tr>
+            <?php  ?>
+          </tbody>
+        </table>
+      </div>
     </div>
     <?php include('inc.footer.php'); ?>
   </div>

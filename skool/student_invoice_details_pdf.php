@@ -22,6 +22,8 @@
         <!-- <br> -->
         <div class="col-lg-4" style="margin-bottom: 5px;"> Terms : <?= $studentTermPdf ?>
         </div>
+        <div class="col-lg-4" style="margin-bottom: 5px;"> Payment Type : <?php $PType = ($iStudentFeeDetailsPdf['PType'] == 1) ? 'Fixed' : 'Flexible' ; echo $PType;?>
+        </div>
         <!-- <br> -->
     </div>
     <div class="form-group clearfix plims">
